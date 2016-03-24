@@ -50,7 +50,7 @@ def authorize(server, account, domains):
         for i, domain in enumerate(domains):
             auth = authz[domain]
             logger.info("  _acme-challenge.{}.  IN TXT  \"{}\"".format(domain, auth['txt_record']))
-            session[i].deploy_challenge(auth["txt_record"])
+            sessions[i].deploy_challenge(auth["txt_record"])
 
         # Verify each domain
         done, failed = set(), set()
@@ -85,8 +85,8 @@ def authorize(server, account, domains):
                     logger.info("{}: {} ({})".format(domain, error_reason, error_type))
                     break
 
-        for sess in sessions:
-            sess.clean_challenge()
+        for session in sessions:
+            session.clean_challenge()
 
         logger.info("")
         if failed:

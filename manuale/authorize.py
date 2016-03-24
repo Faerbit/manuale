@@ -21,10 +21,6 @@ def authorize(server, account, domains):
     thumbprint = generate_jwk_thumbprint(account.key)
 
     try:
-        # Create INWX API sessions
-        sessions = []
-        for domain in domains:
-            sessions.append(InwxChallenge(domain))
 
         # Get pending authorizations for each domain
         authz = {}
@@ -46,6 +42,11 @@ def authorize(server, account, domains):
             auth['txt_record'] = jose_b64(digest.digest())
 
             authz[domain] = auth
+
+        # Create INWX API sessions
+        sessions = []
+        for domain in domains:
+            sessions.append(InwxChallenge(domain))
 
         for i, domain in enumerate(domains):
             auth = authz[domain]
@@ -84,9 +85,6 @@ def authorize(server, account, domains):
 
                     logger.info("{}: {} ({})".format(domain, error_reason, error_type))
                     break
-
-        for session in sessions:
-            session.clean_challenge()
 
         logger.info("")
         if failed:

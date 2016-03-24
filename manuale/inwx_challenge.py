@@ -15,6 +15,9 @@ class InwxChallenge:
         self.domain = domain
         self._login()
 
+    def __del__(self):
+        self._clean_challenge()
+
     def _login(self):
         api_url, username, password, shared_secret = get_account_data(
                 print_errors = True, config_file="/etc/manuale.ini",
@@ -32,17 +35,17 @@ class InwxChallenge:
         self.recordId = response["resData"]["id"]
         logger.info("TXT record registered...")
         logger.info("Checking if DNS has propagated...")
-        while(self._has_dns_propagated() == False):
+        while(self._has_dns_propagated(challenge) == False):
             logger.info("DNS not propagated, waiting 30s...")
             time.sleep(30)
         logger.info("DNS propagated.")
 
-    def clean_challenge(self):
+    def _clean_challenge(self):
         """Deletes challenge TXT record"""
         self.api.nameserver.deleteRecord({"id":self.recordId})
         logger.info("Deleted TXT record for {}".format(self.domain))
 
-    def _has_dns_propagated(self):
+    def _has_dns_propagated(self, challenge):
         """Checks if the TXT record has propagated."""
         txt_records = []
         try:
@@ -54,7 +57,7 @@ class InwxChallenge:
             return False
 
         for txt_record in txt_records:
-            if txt_record == self.token:
+            if txt_record == challenge:
                 return True
 
         return False

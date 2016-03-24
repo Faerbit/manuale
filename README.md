@@ -1,3 +1,5 @@
+This fork tries to automate getting certs in collaboration with the INWX API.
+
 # ManuaLE
 
 manuale is a fully manual [Let's Encrypt](https://letsencrypt.org)/[ACME](https://github.com/ietf-wg-acme/acme/) client for advanced users. It is intended to be used by a human in a manual workflow and contains no automation features whatsoever.

@@ -12,6 +12,7 @@ from .acme import Acme
 from .crypto import generate_jwk_thumbprint, jose_b64
 from .errors import ManualeError, AcmeError
 from .helpers import confirm
+from .inwx_challenge import InwxChallenge
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,11 @@ def authorize(server, account, domains):
     thumbprint = generate_jwk_thumbprint(account.key)
 
     try:
+        # Create INWX API sessions
+        sessions = []
+        for domain in domains:
+            sessions.append(InwxChallenge(domain))
+
         # Get pending authorizations for each domain
         authz = {}
         for domain in domains:
@@ -41,14 +47,10 @@ def authorize(server, account, domains):
 
             authz[domain] = auth
 
-        logger.info("")
-        logger.info("DNS verification required. Make sure these TXT records are in place:")
-        logger.info("")
-        for domain in domains:
+        for i, domain in enumerate(domains):
             auth = authz[domain]
             logger.info("  _acme-challenge.{}.  IN TXT  \"{}\"".format(domain, auth['txt_record']))
-        logger.info("")
-        input("Press enter to continue.")
+            session[i].deploy_challenge(auth["txt_record"])
 
         # Verify each domain
         done, failed = set(), set()
@@ -82,6 +84,9 @@ def authorize(server, account, domains):
 
                     logger.info("{}: {} ({})".format(domain, error_reason, error_type))
                     break
+
+        for sess in sessions:
+            sess.clean_challenge()
 
         logger.info("")
         if failed:

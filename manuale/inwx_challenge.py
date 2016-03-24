@@ -1,6 +1,11 @@
+import logging
+
 import dns
+
 from .inwx import domrobot
 from .configuration import get_account_data
+
+logger = logging.getLogger(__name__)
 
 class InwxChallenge:
 

@@ -1,6 +1,7 @@
 import logging
 
-import dns
+import dns.resolver
+import dns.exception
 
 from .inwx import domrobot
 from .configuration import get_account_data

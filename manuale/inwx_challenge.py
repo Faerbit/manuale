@@ -13,7 +13,7 @@ class InwxChallenge:
                 print_errors = True, config_file="/etc/manuale.ini",
                 config_section="live")
         self.api = domrobot(api_url, debug = False)
-        self.api.login({"user": username, "pass": password})
+        self.api.account.login({"user": username, "pass": password})
 
     def deploy_challenge(self, challenge):
         """Creates challenge TXT record"""

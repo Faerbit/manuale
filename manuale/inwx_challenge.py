@@ -6,7 +6,7 @@ class InwxChallenge:
 
     def __init__(self, domain):
         self.domain = domain
-        self.login()
+        self._login()
 
     def _login(self):
         api_url, username, password, shared_secret = get_account_data(

@@ -36,9 +36,12 @@ class InwxChallenge:
         self.recordId = response["resData"]["id"]
         logger.info("TXT record registered...")
         logger.info("Checking if DNS has propagated...")
-        while(self._has_dns_propagated(challenge) == False):
-            logger.info("DNS not propagated, waiting 30s...")
-            time.sleep(30)
+        for i in range(20):
+            if (self._has_dns_propagated(challenge) == False):
+                logger.info("Try {:2d}/20 failed: DNS not propagated, waiting 30s...".format(i))
+                time.sleep(30)
+            else:
+                break
         logger.info("DNS propagated.")
 
     def _clean_challenge(self):

@@ -56,7 +56,6 @@ class InwxChallenge:
         name = "_acme-challenge." + self.domain
         try:
             resolver = dns.resolver.Resolver()
-            # INWX, google and ccc nameservers
             resolver.nameservers = self.nameservers
             dns_response = resolver.query(name, 'TXT')
             for rdata in dns_response:

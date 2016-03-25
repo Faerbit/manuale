@@ -51,7 +51,9 @@ class InwxChallenge:
         txt_records = []
         name = "_acme-challenge." + self.domain
         try:
-            dns_response = dns.resolver.query(name, 'TXT')
+            resolver = dns.resolver.Resolver()
+            resolver.nameservers = ["ns.inwx.de", "8.8.8.8", "213.73.91.35"]
+            dns_response = resolver.query(name, 'TXT')
             for rdata in dns_response:
                 for txt_record in rdata.strings:
                     txt_records.append(txt_record)

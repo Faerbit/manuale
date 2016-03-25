@@ -5,7 +5,7 @@ import dns.resolver
 import dns.exception
 
 from .inwx import domrobot
-from .configuration import get_account_data
+from .configuration import get_account_data, get_nameservers
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,8 @@ class InwxChallenge:
     def __init__(self, domain):
         self.domain = domain
         self._login()
+        self.nameservers = get_nameservers(config_file="/etc/manuale.ini",
+                config_section="live")
 
     def __del__(self):
         if self.recordId:
@@ -21,8 +23,7 @@ class InwxChallenge:
 
     def _login(self):
         api_url, username, password, shared_secret = get_account_data(
-                print_errors = True, config_file="/etc/manuale.ini",
-                config_section="live")
+                config_file="/etc/manuale.ini", config_section="live")
         self.api = domrobot(api_url, debug = False)
         self.api.account.login({"user": username, "pass": password})
 
@@ -56,7 +57,7 @@ class InwxChallenge:
         try:
             resolver = dns.resolver.Resolver()
             # INWX, google and ccc nameservers
-            resolver.nameservers = ["217.70.142.66", "8.8.8.8", "213.73.91.35"]
+            resolver.nameservers = self.nameservers
             dns_response = resolver.query(name, 'TXT')
             for rdata in dns_response:
                 for txt_record in rdata.strings:

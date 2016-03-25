@@ -31,6 +31,7 @@ else:
     import ConfigParser as configparser
 
 from os.path import expanduser
+from ast import literal_eval
 
 def get_account_data(print_errors = False, config_file = 'config.ini', config_section = 'ote'):
     """
@@ -52,6 +53,20 @@ def get_account_data(print_errors = False, config_file = 'config.ini', config_se
         else:
             raise NameError(message)
     return (api_url, username, password, shared_secret)
+
+def get_nameservers(print_errors = False, config_file = 'config.ini', config_section = 'ote'):
+    config = open_config_file(print_errors, config_file)
+    try:
+        nameservers = config.get(config_section, 'nameservers')
+        nameservers = literal_eval(nameservers)
+    except Exception as err:
+        message = 'Error: Please make sure your config file %s contains the section %s with the entry "nameservers" and that it is formatted correctly as a list.' % (config_file, config_section)
+        if print_errors:
+            print(message)
+            sys.exit(2)
+        else:
+            raise NameError(message)
+    return nameservers
 
 def open_config_file(print_errors, config_file):
     config = configparser.ConfigParser()

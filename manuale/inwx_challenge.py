@@ -16,7 +16,8 @@ class InwxChallenge:
         self._login()
 
     def __del__(self):
-        self._clean_challenge()
+        if self.recordId:
+            self._clean_challenge()
 
     def _login(self):
         api_url, username, password, shared_secret = get_account_data(
@@ -48,8 +49,9 @@ class InwxChallenge:
     def _has_dns_propagated(self, challenge):
         """Checks if the TXT record has propagated."""
         txt_records = []
+        name = "_acme-challenge." + self.domain
         try:
-            dns_response = dns.resolver.query(self.domain, 'TXT')
+            dns_response = dns.resolver.query(name, 'TXT')
             for rdata in dns_response:
                 for txt_record in rdata.strings:
                     txt_records.append(txt_record)
